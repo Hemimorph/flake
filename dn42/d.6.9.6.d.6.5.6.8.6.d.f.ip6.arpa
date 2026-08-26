@@ -1,0 +1,36 @@
+$ORIGIN d.6.9.6.d.6.5.6.8.6.d.f.ip6.arpa.
+$TTL	3600
+
+d.6.9.6.d.6.5.6.8.6.d.f.ip6.arpa. IN SOA ns1.hemimorph.dn42. cryolitia.gmail.com. (
+		2026082601     ; Serial
+		      3600     ; Refresh
+		        30     ; Retry
+		   2419200     ; Expire
+		      3600 )   ; minimum
+
+; name servers - NS records
+@		IN	NS	ns1.hemimorph.dn42.
+
+; name servers - AAAA records
+1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0		IN	PTR	hemimorph.dn42.
+1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0		IN	PTR	ns1.hemimorph.dn42.
+
+0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0		IN	PTR	router.hemimorph.dn42.
+1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0		IN	PTR	root.hemimorph.dn42.
+
+
+$ORIGIN 0.0.0.0.0.0.0.0.0.0.0.f.f.f.f.d.6.9.6.d.6.5.6.8.6.d.f.ip6.arpa.
+$GENERATE 0-9 0.0.0.0.${0,1,n} IN PTR local.${0,4,x}.ptp.hemimorph.dn42.
+$GENERATE 0-9 1.0.0.0.${0,1,n} IN PTR remote.${0,4,x}.ptp.hemimorph.dn42.
+
+$ORIGIN 0.0.0.0.0.0.0.0.0.0.f.f.f.f.d.6.9.6.d.6.5.6.8.6.d.f.ip6.arpa.
+$GENERATE 16-153 0.0.0.0.${0,2,n} IN PTR local.${0,4,x}.ptp.hemimorph.dn42.
+$GENERATE 16-153 1.0.0.0.${0,2,n} IN PTR remote.${0,4,x}.ptp.hemimorph.dn42.
+
+$ORIGIN 0.0.0.0.0.0.0.0.0.f.f.f.f.d.6.9.6.d.6.5.6.8.6.d.f.ip6.arpa.
+$GENERATE 256-2457 0.0.0.0.${0,3,n} IN PTR local.${0,4,x}.ptp.hemimorph.dn42.
+$GENERATE 256-2457 1.0.0.0.${0,3,n} IN PTR remote.${0,4,x}.ptp.hemimorph.dn42.
+
+$ORIGIN 0.0.0.0.0.0.0.0.f.f.f.f.d.6.9.6.d.6.5.6.8.6.d.f.ip6.arpa.
+$GENERATE 4096-14745 0.0.0.0.${0,4,n} IN PTR local.${0,4,x}.ptp.hemimorph.dn42.
+$GENERATE 4096-14745 1.0.0.0.${0,4,n} IN PTR remote.${0,4,x}.ptp.hemimorph.dn42.

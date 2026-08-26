@@ -1,0 +1,148 @@
+{
+  config,
+  lib,
+  ...
+}:
+let
+  cfg = config.me.cryolitia.services.nginx;
+  blacklistAddress = [
+    "fdd2:4372:796f:ffff::/64"
+  ];
+  whitelistAddress = [
+    "fdd2:4372:796f::/48"
+  ];
+  upstreamType = lib.types.submodule {
+    options = {
+      address = lib.mkOption {
+        type = lib.types.str;
+        default = "http://127.0.0.1";
+        example = "http://127.0.0.1";
+        description = "Upstream scheme and address.";
+      };
+      port = lib.mkOption {
+        type = lib.types.ints.between 1 65535;
+        example = 8080;
+        description = "Upstream TCP port.";
+      };
+      forceSSL = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Whether to redirect HTTP requests to HTTPS.";
+      };
+    };
+  };
+  generateVirtualHostConfig = (
+    {
+      zoneCfg,
+      extraConfig ? null,
+    }:
+    (lib.attrsets.mapAttrs' (
+      name: value:
+      lib.attrsets.nameValuePair "${name}.*" {
+        listenAddresses = [
+          "0.0.0.0"
+          "[::]"
+        ];
+        locations."/" = {
+          proxyPass = "${value.address}:${builtins.toString value.port}";
+          proxyWebsockets = true; # needed if you need to use WebSocket
+          extraConfig = ''
+            # required when the target is also TLS server with multiple hosts
+            proxy_ssl_server_name on;
+
+            # required when the server wants to use HTTP Authentication
+            proxy_pass_header Authorization;
+          ''
+          + (lib.optionalString (extraConfig != null) extraConfig)
+          + ''
+            allow 127.0.0.1;
+            allow ::1;
+            allow 192.168.0.0/16;
+            allow fd00::/7;
+            deny all;
+          '';
+        };
+      }
+    ) zoneCfg)
+  );
+
+  generateSSLConfig = (
+    {
+      zoneCfg,
+      extraConfig ? null,
+    }:
+    (
+      (lib.attrsets.mapAttrs' (
+        name: value:
+        lib.attrsets.nameValuePair "${name}.hemimorph.dn42" (
+          (generateVirtualHostConfig { inherit zoneCfg extraConfig; })."${name}.*"
+          // {
+            addSSL = !value.forceSSL;
+            forceSSL = value.forceSSL;
+            enableACME = true;
+          }
+        )
+      ) zoneCfg)
+    )
+  );
+
+  generateAllConfig = (
+    {
+      zoneCfg,
+      extraConfig ? null,
+    }:
+    (generateVirtualHostConfig { inherit zoneCfg extraConfig; })
+    // (generateSSLConfig { inherit zoneCfg extraConfig; })
+  );
+in
+{
+  options = {
+    me.cryolitia.services.nginx = {
+      external = lib.mkOption {
+        type = lib.types.attrsOf upstreamType;
+        default = { };
+      };
+      internal = lib.mkOption {
+        type = lib.types.attrsOf upstreamType;
+        default = { };
+      };
+    };
+  };
+
+  config = {
+    services.nginx = {
+      statusPage = true;
+      recommendedProxySettings = true;
+      virtualHosts =
+        (generateAllConfig {
+          zoneCfg = cfg.internal;
+          extraConfig =
+            "\n"
+            + lib.concatStringsSep "\n" (
+              lib.map (x: "deny ${x};") blacklistAddress ++ lib.map (x: "allow ${x};") whitelistAddress
+            )
+            + ''
+              deny fd00::/7;
+            '';
+        })
+        // (generateAllConfig { zoneCfg = cfg.external; });
+    };
+
+    networking.firewall.allowedTCPPorts =
+      (lib.optionals config.services.nginx.enable [
+        80
+        443
+      ])
+      ++ (lib.optionals (!config.services.nginx.enable) (
+        lib.attrsets.mapAttrsToList (_: value: value.port) cfg.external
+      ));
+
+    security.acme = {
+      acceptTerms = true;
+      defaults = {
+        email = "cryolitia@gmail.com";
+        server = "https://acme.burble.dn42/v1/dn42/acme/directory";
+      };
+    };
+  };
+}

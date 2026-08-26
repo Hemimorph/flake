@@ -1,0 +1,27 @@
+$TTL	3600
+@	IN	SOA	ns1	cryolitia.gmail.com. (
+		2026082601     ; Serial
+		      3600     ; Refresh
+		        30     ; Retry
+		   2419200     ; Expire
+		      3600 )   ; minimum
+
+; name servers - NS records
+@					IN	NS		ns1
+
+; name servers - AAAA records
+@					IN	AAAA	fd68:656d:696d::1
+ns1					IN	AAAA	fd68:656d:696d::1
+
+router				IN	AAAA	fd68:656d:696d::
+root				IN	AAAA	fd68:656d:696d::1
+
+
+$GENERATE 0-3999 local.${0,4,d}.ptp IN AAAA fd68:656d:696d:ffff::${0,4,d}:0
+$GENERATE 0-3999 remote.${0,4,d}.ptp IN AAAA fd68:656d:696d:ffff::${0,4,d}:1
+
+@					IN	TXT	"https://github.com/Cryolitia"
+PGP					IN	TXT	"1C3C6547538D7152310C0EEA84DD0C0130A54DF7"
+SSH					IN	TXT	"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN2mmQ5YQrQyUSYRNvRKTgYiTSdPt3wtCdiY0YBD7+X9 openpgp:0xA2647D3C"
+
+*					IN	CNAME	root
