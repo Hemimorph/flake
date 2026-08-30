@@ -58,8 +58,8 @@ let
     server-https https://dns.google/dns-query -host-ip 8.8.8.8 -host-name dns.google -tls-host-verify dns.google
     server-https https://cloudflare-dns.com/dns-query -host-ip 1.1.1.1 -host-name cloudflare-dns.com -tls-host-verify cloudflare-dns.com
 
-    server 192.168.88.1 -g cn -e
-    server 192.168.88.1 -g internal -e
+    server 192.168.20.1 -g cn -e
+    server 192.168.20.1 -g internal -e
     server 127.0.0.1:1053 -g DN42local -e
     server [fd42:d42:d42:53::1] -g DN42 -e
     server [fd42:d42:d42:54::1] -g DN42 -e
