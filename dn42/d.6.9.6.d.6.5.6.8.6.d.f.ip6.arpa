@@ -17,6 +17,7 @@ d.6.9.6.d.6.5.6.8.6.d.f.ip6.arpa. IN SOA ns1.hemimorph.dn42. cryolitia.gmail.com
 
 0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0		IN	PTR	router.hemimorph.dn42.
 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0		IN	PTR	root.hemimorph.dn42.
+f.f.f.f.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0		IN	PTR	endpoint.hemimorph.dn42.
 
 
 $ORIGIN 0.0.0.0.0.0.0.0.0.0.0.f.f.f.f.d.6.9.6.d.6.5.6.8.6.d.f.ip6.arpa.

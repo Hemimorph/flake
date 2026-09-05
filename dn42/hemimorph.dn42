@@ -15,6 +15,7 @@ ns1					IN	AAAA	fd68:656d:696d::1
 
 router				IN	AAAA	fd68:656d:696d::
 root				IN	AAAA	fd68:656d:696d::1
+endpoint			IN	AAAA	fd68:656d:696d::ffff
 
 
 $GENERATE 0-3999 local.${0,4,d}.ptp IN AAAA fd68:656d:696d:ffff::${0,4,d}:0
