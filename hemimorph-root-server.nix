@@ -20,6 +20,9 @@
 
   services.fstrim.enable = false; # Let Proxmox host handle fstrim
 
+  # Proxmox's LXC policy blocks debugfs mounts, even in privileged containers.
+  systemd.suppressedSystemUnits = [ "sys-kernel-debug.mount" ];
+
   system.stateVersion = "26.05";
 
   time.timeZone = "Asia/Shanghai";
